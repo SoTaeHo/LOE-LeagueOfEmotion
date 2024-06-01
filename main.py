@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 import time
 
-# 감정 인식 모델 로드 (이전에 학습한 모델)
+# 감정 인식 모델 로드
 model = load_model('emotion_model.h5')
 
 # 감정 라벨
@@ -66,7 +66,7 @@ def countdown(cap, frame, duration=3):
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-# 얼굴 감지기 로드 (OpenCV DNN 사용)
+# 얼굴 감지기 로드
 def load_face_detector():
     prototxt_path = 'deploy.prototxt'
     caffemodel_path = 'res10_300x300_ssd_iter_140000.caffemodel'
@@ -113,8 +113,6 @@ def analyze_emotion(frame, cap, net, player, duration=10):
             roi_gray = roi_gray.reshape(1, 48, 48, 1)
             emotion_probs = model.predict(roi_gray)[0]
             emotion_scores.append(emotion_probs)
-
-            # 얼굴에 사각형 그리기
             cv2.rectangle(cap_frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
         # 플레이어 정보 표시
