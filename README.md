@@ -8,6 +8,7 @@ LOE - League Of Emotion은 FER(Face Emotion Recognition)을 이용하여 누가 
 - [특징](#특징)
 - [요구 사항](#요구-사항)
 - [모델 학습](#모델-학습)
+- [화면 출력](#화면-출력)
 - [게임 플레이](#게임-플레이)
 
 ## 요구 사항
@@ -24,6 +25,51 @@ LOE - League Of Emotion은 FER(Face Emotion Recognition)을 이용하여 누가 
 그 외에도 chatGPT를 이용하여 모델의 성능을 개선할 수 있는 여러 방법(전이 학습, 데이터 전처리, 복잡한 모델 생성, 앙상블 메소드 사용)을 시도해보았지만, 학습 시간이 매우 오래걸리거나 Accuracy같은 성능이 눈에 띄게 향상되지 않아 적당한 성능과 학습 시간을 보유한 해당 모델을 사용하게 되었다.
 
 얼굴 감지기는 기존에는 Haar Cascade 감지기를 사용했었다. 얼굴 감지할 때 빠른 속도가 장점이라하여 사용했는데, 점수 측정이나 실시간 연산이 계속되다보니 빠른 속도가 체감되지 않았다. 또한 어두운 환경이거나 얼굴의 측면을 보이면 제대로 감지하지 못했다. 따라서 더 좋은 성능을 보여주는 OpenCV DNN 모듈을 사용하게 되었다. 속도는 별 차이 없었지만, 얼굴의 측면을 훨씬 잘 감지하여 프로그램의 성능을 향상 시킬 수 있었다.
+
+### ImageDataGenerator
+
+- `ImageDataGenerator`를 사용하여 이미지 데이터를 전처리한다. 데이터는 0과 1 사이의 값으로 스케일링되고, train data의 20%는 validation data로 사용한다.
+
+### 데이터 생성기
+
+- `flow_from_directory`를 사용하여 train data, validation data, test data를 생성한다. 각 이미지의 크기는 48x48로 조정되며, 회색조로 변환된다. 배치 크기는 64로 설정되고, 다중 클래스 분류를 위해 `categorical` 모드를 사용했다.
+
+### 모델 구축
+
+- `Sequential` 모델을 사용하여 3개의 합성곱 층(Conv2D)과 맥스 풀링(MaxPooling2D) 및 드롭아웃(Dropout) 층으로 구성된 신경망을 구축했다. 마지막에 두 개의 전결합 층(Dense)이 있으며, 7개의 감정 클래스를 분류하기 위해 소프트맥스 활성화 함수를 사용했다.
+
+### 모델 컴파일
+
+- `adam` 옵티마이저와 `categorical_crossentropy`를 사용하여 모델을 컴파일한다. 성능 평가는 정확도를 측정했다.
+
+### 모델 학습
+
+- 모델은 train data를 사용하여 30 epoch 학습했다. 학습 중 validation data가 사용되어 모델의 성능을 평가한다.
+
+## 화면 출력
+
+openCV의 기능 내에서 해결하였다. 
+
+### select_emotion, exit_program
+
+- 마우스 이벤트를 다루는 함수이다. 감정을 고를 때, exit버튼을 눌러 종료할 때, 호출된다.
+
+### show_emotion_selection, countdown
+
+- 감정 선택 창과, 카운트 다운 화면을 불러와주는 함수이다.
+
+### load_face_detector
+
+- 얼굴 감지기 모델을 불러오는 함수이다.
+
+### detect_faces_dnn
+
+- load한 얼굴 감지기를 이용하여 프레임에서 얼굴을 감지한다.
+
+### analyze_emotion
+
+- 10초동안 프레임을 캡처하여 감정을 분석한다.
+- 얼굴을 감지하고, 감지된 얼굴 영역을 모델의 입력으로 넘겨 감정을 예측하여 감정 점수를 나타내준다.
 
 ## 게임 플레이
 
