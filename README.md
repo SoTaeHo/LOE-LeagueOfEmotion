@@ -122,8 +122,6 @@ SOFTWARE.
 
 ## 참고 문헌
 
-## 참고 문헌
-
 - OpenCV 문서: [https://docs.opencv.org/](https://docs.opencv.org/)
 - OpenCV DNN 모듈
   - [https://github.com/gopinath-balu/computer_vision/blob/master/CAFFE_DNN/res10_300x300_ssd_iter_140000.caffemodel](https://github.com/gopinath-balu/computer_vision/blob/master/CAFFE_DNN/res10_300x300_ssd_iter_140000.caffemodel),
